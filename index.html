@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Very Important Question</title>
+  <style>
+    :root {
+      --bg: #fff7fb;
+      --ink: #2f1d2b;
+      --pink: #e94d8a;
+      --pink-dark: #bd2f69;
+      --blue: #4b7bec;
+      --cream: #fffdf8;
+      --shadow: 0 22px 70px rgba(189, 47, 105, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(233, 77, 138, 0.16), transparent 30%),
+        radial-gradient(circle at 82% 18%, rgba(75, 123, 236, 0.14), transparent 28%),
+        linear-gradient(135deg, #fff7fb 0%, #fffdf8 48%, #f3f7ff 100%);
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .page {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: min(680px, 100%);
+      padding: clamp(28px, 6vw, 56px);
+      border: 1px solid rgba(233, 77, 138, 0.18);
+      border-radius: 28px;
+      background: rgba(255, 253, 248, 0.86);
+      box-shadow: var(--shadow);
+      text-align: center;
+      backdrop-filter: blur(18px);
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--pink-dark);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(40px, 8vw, 76px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .message {
+      max-width: 520px;
+      margin: 20px auto 0;
+      font-size: clamp(17px, 2.4vw, 21px);
+      line-height: 1.55;
+      color: rgba(47, 29, 43, 0.76);
+    }
+
+    .buttons {
+      position: relative;
+      height: 150px;
+      margin-top: 34px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+      user-select: none;
+    }
+
+    #yesButton {
+      min-width: 150px;
+      padding: 18px 34px;
+      color: white;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      box-shadow: 0 16px 30px rgba(233, 77, 138, 0.32);
+    }
+
+    #yesButton:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 20px 38px rgba(233, 77, 138, 0.4);
+    }
+
+    #noButton {
+      position: absolute;
+      left: calc(50% + 86px);
+      top: 50%;
+      min-width: 110px;
+      padding: 16px 28px;
+      color: var(--ink);
+      background: white;
+      border: 1px solid rgba(47, 29, 43, 0.12);
+      box-shadow: 0 12px 26px rgba(47, 29, 43, 0.12);
+    }
+
+    .success {
+      display: none;
+      margin-top: 28px;
+      padding: 24px;
+      border-radius: 22px;
+      background: rgba(233, 77, 138, 0.1);
+      color: var(--pink-dark);
+      font-size: clamp(34px, 7vw, 64px);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .success.show {
+      display: block;
+      animation: pop 600ms cubic-bezier(.2, 1.4, .4, 1) both;
+    }
+
+    .heart {
+      position: fixed;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(233, 77, 138, 0.26);
+      animation: floatUp 8s linear infinite;
+      z-index: 1;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: inherit;
+    }
+
+    .heart::before {
+      left: -8px;
+    }
+
+    .heart::after {
+      top: -8px;
+    }
+
+    @keyframes pop {
+      from {
+        opacity: 0;
+        transform: scale(0.72);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes floatUp {
+      from {
+        transform: translateY(105vh) rotate(45deg);
+        opacity: 0;
+      }
+      14% {
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-18vh) rotate(45deg);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .buttons {
+        height: 190px;
+      }
+
+      #noButton {
+        left: calc(50% - 55px);
+        top: 104px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+
+  <div class="heart" style="left: 6%; animation-delay: 0s;"></div>
+  <div class="heart" style="left: 18%; animation-delay: 2s;"></div>
+  <div class="heart" style="left: 76%; animation-delay: 1s;"></div>
+  <div class="heart" style="left: 90%; animation-delay: 3.5s;"></div>
+
+  <main class="page">
+    <section class="card">
+      <p class="eyebrow">One small question</p>
+      <h1>Will you be my girlfriend?</h1>
+      <p class="message">
+        This page has exactly one reasonable answer. The other button has chosen a life of fear.
+      </p>
+
+      <div class="buttons" id="buttonZone">
+        <button id="yesButton" type="button">Yes</button>
+        <button id="noButton" type="button">No</button>
+      </div>
+
+      <div class="success" id="successMessage">YAYYYYY!</div>
+    </section>
+  </main>
+
+  <script>
+    const noButton = document.getElementById("noButton");
+    const yesButton = document.getElementById("yesButton");
+    const successMessage = document.getElementById("successMessage");
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+
+    let confettiPieces = [];
+    let confettiRunning = false;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function moveNoButton() {
+      const padding = 18;
+      const buttonRect = noButton.getBoundingClientRect();
+      const maxX = window.innerWidth - buttonRect.width - padding;
+      const maxY = window.innerHeight - buttonRect.height - padding;
+
+      const nextX = Math.max(padding, Math.random() * maxX);
+      const nextY = Math.max(padding, Math.random() * maxY);
+
+      noButton.style.position = "fixed";
+      noButton.style.left = `${nextX}px`;
+      noButton.style.top = `${nextY}px`;
+      noButton.style.transform = `rotate(${Math.random() * 18 - 9}deg)`;
+    }
+
+    function isCursorNearButton(x, y) {
+      const rect = noButton.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const distance = Math.hypot(x - centerX, y - centerY);
+      return distance < 150;
+    }
+
+    document.addEventListener("mousemove", (event) => {
+      if (isCursorNearButton(event.clientX, event.clientY)) {
+        moveNoButton();
+      }
+    });
+
+    noButton.addEventListener("mouseenter", moveNoButton);
+    noButton.addEventListener("touchstart", (event) => {
+      event.preventDefault();
+      moveNoButton();
+    });
+
+    yesButton.addEventListener("click", () => {
+      successMessage.classList.add("show");
+      noButton.style.display = "none";
+      yesButton.textContent = "Best answer";
+      startConfetti();
+    });
+
+    function startConfetti() {
+      confettiPieces = Array.from({ length: 180 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * -canvas.height,
+        size: Math.random() * 8 + 5,
+        speed: Math.random() * 4 + 3,
+        rotation: Math.random() * 360,
+        spin: Math.random() * 12 - 6,
+        color: randomConfettiColor()
+      }));
+
+      if (!confettiRunning) {
+        confettiRunning = true;
+        requestAnimationFrame(drawConfetti);
+      }
+
+      setTimeout(() => {
+        confettiRunning = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }, 5200);
+    }
+
+    function drawConfetti() {
+      if (!confettiRunning) {
+        return;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const piece of confettiPieces) {
+        piece.y += piece.speed;
+        piece.x += Math.sin(piece.y / 28) * 1.8;
+        piece.rotation += piece.spin;
+
+        if (piece.y > canvas.height + 24) {
+          piece.y = -24;
+          piece.x = Math.random() * canvas.width;
+        }
+
+        ctx.save();
+        ctx.translate(piece.x, piece.y);
+        ctx.rotate(piece.rotation * Math.PI / 180);
+        ctx.fillStyle = piece.color;
+        ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size * 0.62);
+        ctx.restore();
+      }
+
+      requestAnimationFrame(drawConfetti);
+    }
+
+    function randomConfettiColor() {
+      const colors = ["#e94d8a", "#bd2f69", "#4b7bec", "#20bf6b", "#fed330", "#fd9644"];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+  </script>
+</body>
+</html>
